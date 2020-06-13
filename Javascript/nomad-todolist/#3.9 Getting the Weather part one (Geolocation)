@@ -1,0 +1,97 @@
+# Getting the Weather part 1. (Geolocation)
+
+
+
+우리는 이제 유저의 location 좌표 정보를 읽어서 
+그 정보를 저장하고 저장값이 없다면 요청하고, 저장값이 있으면 저장값을 가져오는 일들을 할 것이다. 
+
+navigator, window, document 등 다양한 방법이 있지만, 우리는 이번에 navigator를 이용할 것이다.
+
+
+먼저 weather.js 파일을 만들어보자.
+
+ 
+
+    const  weather  =  document.querySelector(".js-weather");
+    const  API_KEY  =  "9bc759acb6c1fe70d2bd4b0dcab41ef1";
+    const  COORDS  =  "coords"; // coordinate의 약자로 좌표를 의미한다.
+
+    function  getWeather(lat, lon) {  // 날씨정보를 가져오는 함수
+	fetch(  // 
+	`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+	).then(function  (response) {  // .then 은 앞에 있는 것을 다 완료 한 뒤에 실행하도록 하는 것이다.(공부하기)
+		return  response.json();  // json을 가져올 것임. (js 정보)
+	})
+	.then(function  (json) {
+		const  temperature  =  json.main.temp;
+		const  place  =  json.name;
+		weather.innerHTML  =  `${place}의 기온은 ${temperature}도 이네요🐾`;
+	});
+	}
+
+  
+	function  saveCoords(coordsObj) {  // 좌표를 로컬에 저장하는 함수
+	localStorage.setItem(COORDS,  JSON.stringify(coordsObj));  // 로컬에 저장해야하니까 stringify 해줌
+	}
+
+	function  handleGeoSucces(position) {   // 위치접근에 성공했을 경우 실행할 함수
+		const  latitude  =  position.coords.latitude;  // 위도
+		const  longitude  =  position.coords.longitude;  // 경도
+		const  coordsObj  =  {
+			latitude,
+			longitude,
+		};
+		saveCoords(coordsObj);
+		getWeather(latitude,  longitude);
+	}
+
+	function  handleGeoError() {
+		console.log("cant access geo location");
+	}
+
+	function  askForCoords() {
+		navigator.geolocation.getCurrentPosition(handleGeoSucces,  handleGeoError);
+	} // getCurrentPosition은 메서드로, 현재위치 정보 접근에 성공했을 경우 실행할 콜백함수, 접근에 에러있                
+	  // 을 경우의 콜백함수, 옵션 등 3개의 인자를 가져올 수 있다.) 
+
+	function  loadCoords() {  // 좌표 화면에 로드해오는 함수
+		const  loadedCoords  =  localStorage.getItem(COORDS);
+		if (loadedCoords  ===  null) {  //좌표가 로컬에 저장되어있지 않을경우 askForCoords 함수를 실행
+			askForCoords();
+		} else {
+			const  parsedCoords  =  JSON.parse(loadedCoords);  //로컬에서 가져오는 정보이므로 parse해준다
+			getWeather(parsedCoords.latitude,  parsedCoords.longitude);
+		}
+	}
+
+	function  init() {
+		loadCoords();
+	}
+	init();
+
+
+
+##  WEATHER API
+
+
+open API를 통해서 사람들이 데이터를 사용하라고 제공해줌. 
+여기 나온 URL 예제로 REQUEST를 보내면 데이터를 얻을 수 있다.
+
+
+[https://openweathermap.org/current#data](https://openweathermap.org/current#data) 사이트에서 
+API KEYS 의 KEY를 받아와서 
+`const API_KEY = ""` 에 담아준다.
+
+
+## FETCH
+
+어떻게 JS를 이용해서 특정 URL을 호출할 수 있을까?
+사실 이 부분이 바로 JS가 강해진 이유이다.
+왜냐하면 JS는 웹사이트로 Request를 보내고 응답을 통해서 데이터를 얻을 수 있는데
+가져온 데이터를 refresh 없이도 나의 웹사이트에 적용시킬 수 있기 때문이다. 
+
+예를 들어, 우리가 이메일을 확인할 때, 
+웹사이트를 새로고침 하지 않아도 실시간으로 메일이 오는 것을 확인 할 수 이는 이유이다. 
+
+왜냐하면 js가 보이지 않는 곳에서 계속 데이터를 가져오고 있기 때문이다.
+
