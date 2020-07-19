@@ -5,7 +5,7 @@
 
 <h1 id="instagram-클론-프로젝트-후기">Instagram 클론 프로젝트 후기</h1>
 <h2 id="프로젝트-소개">1. 프로젝트 소개</h2>
-<iframe width="1152" height="480" src="https://www.youtube.com/embed/uHw2Q8IyFvA" allowfullscreen=""></iframe>
+https://youtu.be/uHw2Q8IyFvA
 
 <p>전세계적으로 사용되는 소셜 미디어 플랫폼 중 심플하고 재사용 가능한 컴포넌트 UI로 구현된 인스타그램 Web App 클론</p>
 <h3 id="목적">1) 목적</h3>
